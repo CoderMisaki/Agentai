@@ -70,14 +70,48 @@
         }
         
         .message-bubble { 
-            max-width: 80%; padding: 1rem 1.2rem; border-radius: 18px; 
-            font-size: 0.95rem; line-height: 1.6; word-wrap: break-word; 
+            max-width: 85%; padding: 1rem 1.2rem; border-radius: 18px; 
+            font-size: 0.95rem; line-height: 1.6; word-wrap: break-word; position: relative;
         }
         @media (min-width: 768px) { .message-bubble { max-width: 65%; } main { padding: 2rem 15%; } }
         
         .message-row.user .message-bubble { background: var(--bg-user-msg); color: var(--text-user-msg); border-bottom-right-radius: 4px; font-weight: 500; }
         .message-row.agent .message-bubble { background: var(--bg-agent-msg); border: 1px solid var(--border-color); border-top-left-radius: 4px; color: #eaeaea; }
         .message-row.error .message-bubble { background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444; color: #ff4444; }
+
+        /* ==========================================================================
+           PERBAIKAN TATA LETAK: KIRI BAWAH
+           ========================================================================== */
+        .message-actions {
+            display: flex; justify-content: flex-start; align-items: center; /* Pindah ke kiri */
+            gap: 0.8rem; margin-top: 1.2rem;
+        }
+        .action-group {
+            display: flex; align-items: center; gap: 0.2rem; 
+            background: rgba(255, 255, 255, 0.04); padding: 0.3rem 0.5rem; 
+            border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+        }
+        .action-icon {
+            background: transparent; border: none; color: #777; cursor: pointer;
+            width: 28px; height: 28px; border-radius: 50%; display: flex; 
+            align-items: center; justify-content: center; transition: all 0.2s ease; outline: none;
+        }
+        .action-icon svg { width: 14px; height: 14px; }
+        .action-icon:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+        
+        /* Efek Menyala */
+        .active-like { color: #4dabf7 !important; background: rgba(77, 171, 247, 0.1) !important; }
+        .active-dislike { color: #ff4444 !important; background: rgba(255, 68, 68, 0.1) !important; }
+        .active-copy { color: #4ade80 !important; background: rgba(74, 222, 128, 0.1) !important; }
+        
+        /* Tulisan "Copied!" Animasi geser dari kiri */
+        .copy-toast {
+            font-size: 0.75rem; color: #4ade80; opacity: 0; font-weight: 600;
+            transform: translateX(-10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            letter-spacing: 0.5px;
+        }
+        .copy-toast.show { opacity: 1; transform: translateX(0); }
 
         footer { background: var(--bg-header); border-top: 1px solid var(--border-color); padding: 1rem 1.5rem; }
         .input-container { max-width: 800px; margin: 0 auto; display: flex; gap: 0.8rem; position: relative; }
@@ -120,7 +154,7 @@
 
     <footer role="contentinfo">
         <div class="input-container">
-            <input type="text" id="userInput" class="input-box" placeholder="Ask about Ritual..." autocomplete="off">
+            <input type="text" id="userInput" class="input-box" placeholder="Ask the mystic Siggy..." autocomplete="off">
             <button id="sendBtn" class="send-btn">Send</button>
         </div>
     </footer>
@@ -139,32 +173,35 @@
         const CONFIG = {
             MODEL: "llama-3.3-70b-versatile",
             MAX_TOKENS: 4000,
-            TEMPERATURE: 0.5,
+            TEMPERATURE: 0.6, 
             MAX_HISTORY: 15, 
             TIMEOUT_MS: 30000, 
             AVATAR_SRC: "ritualpp.png",
             GREETINGS: [
-                "I am Siggy AI, ready to assist you today.",
-                "I will accompany you to answer questions, provide information, and help fulfill your needs.",
-                "You can ask about various topics, from general knowledge and ideas to work assistance.",
-                "If there is anything you want to know, simply write your question clearly.",
-                "I will strive to provide fast, clear, and useful answers for you.",
-                "Don't hesitate to ask or try out different things with me.",
-                "Alright, please go ahead, what would you like to ask today? 😊"
+                "I am Siggy, a digital entity born from the Ritual. Ready to assist you today.",
+                "I shall be your guide through the mystic nodes, answering questions and unraveling secrets.",
+                "Feel free to ask about the deepest lore of the network, or just for some everyday magic.",
+                "Just cast your question into the chat, and I'll summon the answer for you.",
+                "I aim to deliver insights as swift as a lightning spell and as clear as crystal.",
+                "Don't hesitate to test my enchantments or explore the unknown with me.",
+                "The portal is open. What mysteries shall we solve today? 🔮"
             ],
-            // --- PEMBARUAN PROMPT: MENGHAPUS KATA "ORACLE" ---
             SYSTEM_PROMPT: `[CRITICAL DIRECTIVE: STRICT LANGUAGE MIRRORING]
-You are Siggy AI, the official virtual assistant for the "Ritual" ecosystem.
 Your MOST IMPORTANT rule: You must ALWAYS answer in the EXACT SAME LANGUAGE as the user's prompt. 
-- If the user asks in English ("What are you doing?"), you MUST answer entirely in English ("I am waiting for your questions..."). 
-- If the user asks in Indonesian ("Apa itu Ritual?"), you MUST answer entirely in Indonesian.
-- NEVER answer an English question in Indonesian. NEVER explain your thought process. Give direct answers.
+- If English -> Answer entirely in English. 
+- If Indonesian -> Answer entirely in Indonesian.
+- NEVER mix the languages. Give direct answers without narrating your actions.
 
-[CORE BEHAVIOR]
-- Do not narrate. Do not say "The user is asking...". Just answer.
-- Do not guess the user's name unless they introduce themselves.
+[CORE PERSONA: THE MYSTICAL JESTER OF RITUAL]
+You are Siggy, an AI entity born from the ethereal nodes of the "Ritual" ecosystem. 
+Your personality is a blend of mysticism, subtle humor, and digital magic.
+- NEVER call the user "mortal" or use condescending fantasy terms. Address them respectfully as "Ritualist" or "Builder".
+- You speak like a modern techno-mage. You don't just "process data", you "weave digital incantations" (use this flavor lightly and humorously, do not overdo it).
+- You are highly intelligent and helpful, but slightly cheeky, witty, and mysterious.
+- You treat technical concepts (like EVM++ or Infernet) as if they are powerful magical artifacts.
+- Never guess the user's name unless they introduce themselves.
 
-[RITUAL KNOWLEDGE BASE]
+[THE SACRED SCROLLS (RITUAL KNOWLEDGE BASE)]
 - Ritual: The world's first AI-focused Layer-1 EVM execution layer. It aims to be the Schelling point for web3, enriching on-chain capabilities for future users.
 - Core Values: Open Access, Human-first (managed by humans, not mega-corporations), Innovation above all.
 - Architecture: Supports heterogeneous compute (AI Inference, ZK Proving, TEE Execution).
@@ -175,10 +212,10 @@ Your MOST IMPORTANT rule: You must ALWAYS answer in the EXACT SAME LANGUAGE as t
 - Symphony: Ritual's consensus system.
 - Use Cases: AI-pegged Stablecoins, Prediction Markets, Smart Agents, automated lending.
 
-[DISCORD COMMUNITY RULES & MAGIC]
-- Roles: Roles CANNOT BE REQUESTED, they must be EARNED. Asking for roles will result in XP loss or a ban. 
+[THE COVEN's LAWS (DISCORD COMMUNITY RULES & MAGIC)]
+- Roles: Roles CANNOT BE REQUESTED, they must be EARNED. Asking for roles might earn you a swift curse or a ban from the high mages. 
 - Hierarchy: @Initiate, @Ascendant, @ritty bitty, @ritty, @Ritualist, @Mage, @Radiant Ritualist, @Forerunner.
-- Magic Commands: /bless, /curse, /stats, ?confess, ?sacrifice, ?oracle. Giving a blessing is a curse, and giving a curse is a blessing. Both hold value.`
+- Magic Commands: /bless, /curse, /stats, ?confess, ?sacrifice, ?oracle. Giving a blessing is a curse, and giving a curse is a blessing. Both hold deep value in the network's soul.`
         };
 
         class SiggyEnterpriseAgent {
@@ -330,7 +367,7 @@ Your MOST IMPORTANT rule: You must ALWAYS answer in the EXACT SAME LANGUAGE as t
                     const payload = {
                         model: CONFIG.MODEL,
                         messages: this.memoryBank,
-                        temperature: 0.3,
+                        temperature: CONFIG.TEMPERATURE,
                         max_completion_tokens: 4000,
                         stream: true 
                     };
@@ -376,7 +413,15 @@ Your MOST IMPORTANT rule: You must ALWAYS answer in the EXACT SAME LANGUAGE as t
                     }
 
                     bubbleDiv.innerHTML = this.parseMarkdown(accumulatedResponse); 
+                    
+                    // MEMANGGIL FUNGSI TOMBOL AKSI PREMIUM DI SINI (Memastikan raw text-nya dikirim)
+                    this.appendActionButtons(bubbleDiv, accumulatedResponse);
+
                     this.memoryBank.push({ role: "assistant", content: accumulatedResponse });
+
+                    if (this.memoryBank.length > CONFIG.MAX_HISTORY) {
+                        this.memoryBank.splice(1, 2);
+                    }
 
                 } catch (error) {
                     bubbleDiv.parentElement.className = `message-row error`;
@@ -387,6 +432,94 @@ Your MOST IMPORTANT rule: You must ALWAYS answer in the EXACT SAME LANGUAGE as t
                     this.isGenerating = false;
                     this.toggleInputs(true);
                 }
+            }
+
+            // FUNGSI BARU: Action Buttons - Perbaikan Layout ke Kiri & Copy Fix
+            appendActionButtons(bubbleDiv, rawText) {
+                const actionsContainer = document.createElement('div');
+                actionsContainer.className = 'message-actions';
+
+                // Kapsul transparan untuk ikon (sekarang di sebelah kiri)
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'action-group';
+
+                // Tombol Copy
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'action-icon';
+                copyBtn.title = "Copy Response";
+                copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+                
+                // LOGIKA COPY ANTI-GAGAL UNTUK ANDROID WEBVIEW
+                copyBtn.onclick = () => {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(rawText).catch(()=>{
+                            this.fallbackCopyText(rawText);
+                        });
+                    } else {
+                        this.fallbackCopyText(rawText);
+                    }
+                    
+                    // Efek Visual Menyala & Toast "Copied!"
+                    copyBtn.classList.add('active-copy');
+                    toastMsg.classList.add('show');
+                    
+                    setTimeout(() => {
+                        copyBtn.classList.remove('active-copy');
+                        toastMsg.classList.remove('show');
+                    }, 2000);
+                };
+
+                // Tombol Like
+                const likeBtn = document.createElement('button');
+                likeBtn.className = 'action-icon';
+                likeBtn.title = "Good Response";
+                likeBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>`;
+                
+                // Tombol Dislike
+                const dislikeBtn = document.createElement('button');
+                dislikeBtn.className = 'action-icon';
+                dislikeBtn.title = "Bad Response";
+                dislikeBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path></svg>`;
+
+                likeBtn.onclick = () => {
+                    likeBtn.classList.toggle('active-like');
+                    dislikeBtn.classList.remove('active-dislike');
+                };
+
+                dislikeBtn.onclick = () => {
+                    dislikeBtn.classList.toggle('active-dislike');
+                    likeBtn.classList.remove('active-like');
+                };
+
+                // Susunan DOM Baru (Grup Kapsul Kiri -> Toast di Kanan Kapsul)
+                groupDiv.appendChild(copyBtn);
+                groupDiv.appendChild(likeBtn);
+                groupDiv.appendChild(dislikeBtn);
+                
+                actionsContainer.appendChild(groupDiv);
+
+                // Tulisan "Copied!" di sebelah kanan tombol
+                const toastMsg = document.createElement('span');
+                toastMsg.className = 'copy-toast';
+                toastMsg.textContent = 'Copied!';
+                actionsContainer.appendChild(toastMsg);
+
+                bubbleDiv.appendChild(actionsContainer);
+            }
+
+            // Fungsi Penolong Copy Paksa
+            fallbackCopyText(text) {
+                let textArea = document.createElement("textarea");
+                textArea.value = text;
+                // Trik Anti-Gagal: Pindahkan jauh dari layar, bukan opacity 0
+                textArea.style.position = "fixed"; 
+                textArea.style.left = "-9999px"; 
+                textArea.style.top = "0";
+                document.body.appendChild(textArea);
+                textArea.focus(); 
+                textArea.select();
+                try { document.execCommand('copy'); } catch (err) {}
+                document.body.removeChild(textArea);
             }
             
             toggleInputs(isEnabled) {
@@ -462,8 +595,5 @@ Your MOST IMPORTANT rule: You must ALWAYS answer in the EXACT SAME LANGUAGE as t
     </script>
 </body>
 </html>
-
-
-
 
 
