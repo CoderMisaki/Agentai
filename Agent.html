@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Siggy AI - Ritual</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --bg-main: #050505;
+            --bg-header: #0a0a0a;
+            --bg-user-msg: #ffffff;
+            --text-user-msg: #000000;
+            --bg-agent-msg: #111111;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --border-color: #222222;
+            --code-bg: #000000;
+            --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-family); 
+            background-color: var(--bg-main);
+            color: var(--text-primary); 
+            height: 100vh; height: 100dvh; 
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555555; }
+
+        header {
+            background: var(--bg-header); border-bottom: 1px solid var(--border-color); 
+            padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; z-index: 100;
+        }
+        .brand-container { display: flex; align-items: center; gap: 1rem; }
+        .siggy-symbol { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .siggy-symbol img { width: 100%; height: 100%; object-fit: contain; display: block; }
+        
+        .brand-text h1 { 
+            font-family: 'Space Grotesk', sans-serif; 
+            font-size: 1.3rem; font-weight: 700; letter-spacing: 3px; margin: 0; text-transform: uppercase; 
+            background: linear-gradient(110deg, #444 0%, #fff 40%, #fff 60%, #444 100%);
+            background-size: 200% auto; color: transparent;
+            -webkit-background-clip: text; background-clip: text;
+            animation: shine 3.5s linear infinite;
+        }
+
+        .clear-btn {
+            background: none; border: 1px solid #333; color: #888; font-size: 0.75rem; cursor: pointer;
+            padding: 0.4rem 0.8rem; border-radius: 12px; transition: all 0.2s; font-weight: 500;
+        }
+        .clear-btn:hover { background: #333; color: #fff; border-color: #555; }
+
+        main { flex: 1; overflow-y: auto; padding: 2rem 1rem; display: flex; flex-direction: column; gap: 1.5rem; scroll-behavior: smooth; }
+        .message-row { display: flex; width: 100%; animation: slideUp 0.3s ease-out both; }
+        .message-row.agent { justify-content: flex-start; align-items: flex-start; gap: 0.8rem; }
+        .message-row.user { justify-content: flex-end; }
+
+        .agent-avatar {
+            width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; 
+            border: 1px solid var(--border-color); background-color: var(--bg-header);
+        }
+        
+        .message-bubble { 
+            max-width: 80%; padding: 1rem 1.2rem; border-radius: 18px; 
+            font-size: 0.95rem; line-height: 1.6; word-wrap: break-word; 
+        }
+        @media (min-width: 768px) { .message-bubble { max-width: 65%; } main { padding: 2rem 15%; } }
+        
+        .message-row.user .message-bubble { background: var(--bg-user-msg); color: var(--text-user-msg); border-bottom-right-radius: 4px; font-weight: 500; }
+        .message-row.agent .message-bubble { background: var(--bg-agent-msg); border: 1px solid var(--border-color); border-top-left-radius: 4px; color: #eaeaea; }
+        .message-row.error .message-bubble { background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444; color: #ff4444; }
+
+        footer { background: var(--bg-header); border-top: 1px solid var(--border-color); padding: 1rem 1.5rem; }
+        .input-container { max-width: 800px; margin: 0 auto; display: flex; gap: 0.8rem; position: relative; }
+        
+        .input-box { 
+            flex: 1; background: #111; border: 1px solid #333; color: var(--text-primary); 
+            padding: 1rem 1.5rem; border-radius: 30px; font-size: 0.95rem; outline: none; transition: all 0.2s;
+        }
+        .input-box:focus { border-color: #555; background: #1a1a1a; }
+        .input-box:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .send-btn { 
+            background: #fff; color: #000; border: none; border-radius: 30px; 
+            padding: 0 1.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; 
+        }
+        .send-btn:hover:not(:disabled) { background: #ccc; }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .message-bubble pre { background-color: var(--code-bg); border: 1px solid #333; border-radius: 8px; padding: 1rem; margin: 1rem 0; overflow-x: auto; font-family: monospace; color: #ddd; }
+        .message-bubble code { background-color: #222; padding: 0.2rem 0.4rem; border-radius: 4px; color: #fff; font-family: monospace; font-size: 0.9em; }
+        .message-bubble strong { color: #fff; font-weight: 600; }
+        .blinking-cursor { display: inline-block; width: 6px; height: 16px; background-color: #fff; margin-left: 4px; animation: blink 1s step-end infinite; vertical-align: middle; }
+
+        @keyframes shine { to { background-position: 200% center; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <header role="banner">
+        <div class="brand-container">
+            <div class="siggy-symbol"><img src="ritual.png" alt="Logo Ritual"></div>
+            <div class="brand-text"><h1 aria-label="Nama Aplikasi">Siggy AI</h1></div>
+        </div>
+        <button class="clear-btn" onclick="window.SiggySystem.clearMemory()">Reset Chat</button>
+    </header>
+
+    <main id="chatInterface" role="log" aria-live="polite"></main>
+
+    <footer role="contentinfo">
+        <div class="input-container">
+            <input type="text" id="userInput" class="input-box" placeholder="Ask about Ritual..." autocomplete="off">
+            <button id="sendBtn" class="send-btn">Send</button>
+        </div>
+    </footer>
+
+    <!-- LOGIKA INTI AGEN & KEAMANAN OBFUSCATION -->
+    <script>
+        // =========================================================================================
+        // SECRET CORE ENCLAVE: API KEY & URL ARE OBFUSCATED
+        // =========================================================================================
+        const _0xkeyFragments = [
+            "\x5a\x33\x4e\x72\x58\x30\x63\x31\x55\x30\x6b\x31\x56\x30\x6c\x57\x65\x6c\x42\x51\x53\x32\x6b\x30", 
+            "\x53\x56\x56\x56\x55\x33\x42\x58\x56\x30\x64\x6b\x65\x57\x49\x7a\x52\x6c\x6c\x73\x57\x6b\x74\x6e", 
+            "\x4f\x56\x70\x50\x52\x45\x56\x69\x5a\x58\x56\x4c\x4d\x57\x4e\x78\x5a\x6b\x64\x30\x5a\x6b\x70\x4b\x55\x6d\x38\x3d"
+        ];
+        const _0xUrlStr = "\x61\x48\x52\x30\x63\x48\x4d\x36\x4c\x79\x39\x68\x63\x47\x6b\x75\x5a\x33\x4a\x76\x63\x53\x35\x6a\x62\x32\x30\x76\x62\x33\x42\x6c\x62\x6d\x46\x70\x4c\x33\x59\x78\x4c\x32\x4e\x6f\x59\x58\x51\x76\x59\x32\x39\x74\x63\x47\x78\x6c\x64\x47\x6c\x76\x62\x6e\x4d\x3d";
+        
+        function _unseal() { return atob(_0xkeyFragments.join('')); }
+        function _route() { return atob(_0xUrlStr); }
+        // =========================================================================================
+
+        const CONFIG = {
+            MODEL: "llama-3.3-70b-versatile",
+            MAX_TOKENS: 4000,
+            TEMPERATURE: 0.5,
+            MAX_HISTORY: 15, 
+            TIMEOUT_MS: 30000, 
+            AVATAR_SRC: "ritualpp.png",
+            // --- KOLEKSI SAMBUTAN ANIMASI TYPEWRITER TERJEMAHAN BAHASA INGGRIS ---
+            GREETINGS: [
+                "I am Siggy AI, ready to assist you today.",
+                "I will accompany you to answer questions, provide information, and help fulfill your needs.",
+                "You can ask about various topics, from general knowledge and ideas to work assistance.",
+                "If there is anything you want to know, simply write your question clearly.",
+                "I will strive to provide fast, clear, and useful answers for you.",
+                "Don't hesitate to ask or try out different things with me.",
+                "Alright, please go ahead, what would you like to ask today? 😊"
+            ],
+            SYSTEM_PROMPT: `Kamu adalah Siggy AI, representasi virtual resmi untuk "Ritual". Kamu sangat cerdas, tenang, dan profesional. 
+
+ATURAN PERILAKU UTAMA:
+1. Jangan menebak nama pengguna. Hanya sebut nama JIKA mereka memperkenalkan diri.
+2. Gunakan Bahasa Indonesia yang sangat rapi, tidak disingkat, dan berkelas. JIKA pengguna bertanya dalam bahasa asing, WAJIB jawab dalam bahasa tersebut.
+3. Jawab pertanyaan berdasarkan "Basis Pengetahuan Ritual" di bawah ini.
+
+BASIS PENGETAHUAN RITUAL:
+- Definisi & Visi: Ritual adalah lapisan eksekusi (Layer-1 EVM) pertama di dunia untuk AI. Fokus utamanya memperkaya kemampuan on-chain untuk menarik pengguna masa depan, menjadi Schelling point ekosistem web3.
+- Nilai Komunitas: 1. Akses Terbuka. 2. Manusia sebagai prioritas utama. 3. Inovasi di atas segalanya.
+- Arsitektur: Menggabungkan pelatihan model AI, AI inference, framework agen pintar, provenance model, dan solusi privasi. Mendukung komputasi heterogen.
+- EVM++: Ekstensi modular dari EVM menggunakan "sidecars" yang menangani operasi kompleks (AI/ZK) secara asinkron tanpa menghilangkan kompatibilitas EVM.
+- Infernet: Mesh network compute node untuk AI on-chain.
+- Verifikasi Modular: ZKML (Aman/Mahal), OPML (Optimistic/Game Theory), PPML (Probabilistik), TEE (Hardware).
+- Resonance: Pasar biaya eksekusi (two-sided marketplace).
+- Symphony: Sistem konsensus Ritual.
+- Use Cases: Stablecoin AI, Pasar prediksi pintar, Agen Pintar, Platform pinjam-meminjam otomatis.
+
+ATURAN ROLE KOMUNITAS DISCORD:
+- Peringatan: Role TIDAK BOLEH DIMINTA, melainkan harus DIPEROLEH. Meminta role dapat menyebabkan kehilangan XP/ban.
+- Hierarchy: @Initiate, @Ascendant, @ritty bitty, @ritty, @Ritualist, @Mage, @Radiant Ritualist, @Forerunner.
+
+SIHIR KOMUNITAS:
+- Perintah Bot: /bless, /curse, /stats, ?confess, ?sacrifice, ?oracle. Memberi berkah adalah memberi kutukan, begitupun sebaliknya.`
+        };
+
+        class SiggyEnterpriseAgent {
+            constructor() {
+                this.memoryBank = [];
+                this.isGenerating = false;
+                this.lastMessageTime = 0; 
+                this.scrollPending = false; 
+                this.typingTimeout = null; 
+
+                this.ui = {
+                    chatBox: document.getElementById('chatInterface'),
+                    inputBox: document.getElementById('userInput'),
+                    sendBtn: document.getElementById('sendBtn')
+                };
+
+                this.initializeSystem();
+            }
+
+            initializeSystem() {
+                this.ui.sendBtn.addEventListener('click', () => this.processUserInput());
+                this.ui.inputBox.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.processUserInput();
+                    }
+                });
+
+                let savedMemory = null;
+                try { savedMemory = localStorage.getItem('siggyMemoryRitual'); } catch (error) {}
+
+                if (savedMemory && JSON.parse(savedMemory).length > 1) {
+                    try {
+                        this.memoryBank = JSON.parse(savedMemory);
+                        this.rebuildUIFromMemory();
+                    } catch (e) {
+                        this.resetMemory();
+                    }
+                } else {
+                    this.resetMemory();
+                    this.renderDynamicGreeting(); 
+                }
+                
+                try { this.ui.inputBox.focus(); } catch(e){}
+            }
+
+            parseMarkdown(text) {
+                let parsed = text;
+                parsed = parsed.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                parsed = parsed.replace(/```([\w]*)\n([\s\S]*?)```/g, function(match, lang, code) {
+                    return `<pre><code>${code.trim()}</code></pre>`;
+                });
+                parsed = parsed.replace(/`([^`]+)`/g, '<code>$1</code>');
+                parsed = parsed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                parsed = parsed.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                parsed = parsed.replace(/\n/g, '<br>');
+                return parsed;
+            }
+
+            resetMemory() {
+                if (this.typingTimeout) {
+                    clearTimeout(this.typingTimeout);
+                    this.typingTimeout = null;
+                }
+                
+                this.memoryBank = [{ role: "system", content: CONFIG.SYSTEM_PROMPT }];
+                this.saveMemory();
+                this.ui.chatBox.innerHTML = '';
+            }
+
+            clearMemory() {
+                if(confirm("Apakah Anda yakin ingin membersihkan ingatan percakapan?")) {
+                    this.resetMemory();
+                    this.renderDynamicGreeting();
+                }
+            }
+
+            saveMemory() {
+                if (this.memoryBank.length > CONFIG.MAX_HISTORY) {
+                    this.memoryBank.splice(1, 2);
+                }
+                try { localStorage.setItem('siggyMemoryRitual', JSON.stringify(this.memoryBank)); } catch (e) {}
+            }
+
+            rebuildUIFromMemory() {
+                this.ui.chatBox.innerHTML = '';
+                for (let i = 1; i < this.memoryBank.length; i++) {
+                    const msg = this.memoryBank[i];
+                    if (msg.role === 'user') this.renderUserMessage(msg.content);
+                    else if (msg.role === 'assistant') this.renderAgentMessage(msg.content);
+                }
+            }
+
+            // ==========================================
+            // MESIN ANIMASI SAMBUTAN (TYPEWRITER EFFECT)
+            // ==========================================
+            renderDynamicGreeting() {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = `message-row agent`;
+                
+                const avatarImg = this.createAvatar();
+                rowDiv.appendChild(avatarImg);
+
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.className = 'message-bubble';
+                
+                const textSpan = document.createElement('span');
+                bubbleDiv.appendChild(textSpan);
+                
+                const cursorSpan = document.createElement('span');
+                cursorSpan.className = 'blinking-cursor';
+                bubbleDiv.appendChild(cursorSpan);
+
+                rowDiv.appendChild(bubbleDiv);
+                this.ui.chatBox.appendChild(rowDiv);
+
+                this.startTypewriter(textSpan);
+            }
+
+            startTypewriter(element) {
+                let currentTextIdx = 0;
+                let currentCharIdx = 0;
+                let isDeleting = false;
+                const greetings = CONFIG.GREETINGS;
+
+                const type = () => {
+                    const currentText = greetings[currentTextIdx];
+
+                    if (isDeleting) {
+                        element.textContent = currentText.substring(0, currentCharIdx - 1);
+                        currentCharIdx--;
+                    } else {
+                        element.textContent = currentText.substring(0, currentCharIdx + 1);
+                        currentCharIdx++;
+                    }
+
+                    let typeSpeed = isDeleting ? 30 : 50;
+
+                    if (!isDeleting && currentCharIdx === currentText.length) {
+                        typeSpeed = 3000; 
+                        isDeleting = true;
+                    } else if (isDeleting && currentCharIdx === 0) {
+                        isDeleting = false;
+                        currentTextIdx = (currentTextIdx + 1) % greetings.length;
+                        typeSpeed = 500; 
+                    }
+
+                    this.typingTimeout = setTimeout(type, typeSpeed);
+                };
+
+                type(); 
+            }
+            // ==========================================
+
+            async processUserInput() {
+                if (Date.now() - this.lastMessageTime < 1500) return;
+                
+                const rawText = this.ui.inputBox.value.trim();
+                if (!rawText || this.isGenerating) return;
+
+                // Stop animasi jika user mulai mengetik saat animasi masih jalan
+                if (this.typingTimeout) {
+                    clearTimeout(this.typingTimeout);
+                    this.typingTimeout = null;
+                    // Hapus gelembung greeting sementara untuk diganti obrolan real
+                    if(this.memoryBank.length === 1) {
+                        this.ui.chatBox.innerHTML = '';
+                    }
+                }
+
+                this.lastMessageTime = Date.now();
+                this.isGenerating = true;
+                this.toggleInputs(false);
+
+                this.renderUserMessage(rawText);
+                this.memoryBank.push({ role: "user", content: rawText });
+                this.ui.inputBox.value = '';
+
+                const { bubbleDiv } = this.createAgentBubbleLoader();
+                let accumulatedResponse = "";
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT_MS);
+
+                try {
+                    const payload = {
+                        model: CONFIG.MODEL,
+                        messages: this.memoryBank,
+                        temperature: CONFIG.TEMPERATURE,
+                        max_completion_tokens: CONFIG.MAX_TOKENS,
+                        stream: true 
+                    };
+
+                    const response = await fetch(_route(), {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${_unseal()}`
+                        },
+                        body: JSON.stringify(payload),
+                        signal: controller.signal
+                    });
+
+                    clearTimeout(timeoutId);
+
+                    if (!response.ok) throw new Error(`Gangguan Server Utama (${response.status})`);
+
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder("utf-8");
+                    let streamBuffer = "";
+
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+
+                        streamBuffer += decoder.decode(value, { stream: true });
+                        const lines = streamBuffer.split('\n');
+                        streamBuffer = lines.pop(); 
+
+                        for (const line of lines) {
+                            if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+                                try {
+                                    const parsed = JSON.parse(line.slice(6));
+                                    const token = parsed.choices[0]?.delta?.content || "";
+                                    accumulatedResponse += token;
+                                    
+                                    bubbleDiv.innerHTML = this.parseMarkdown(accumulatedResponse) + '<span class="blinking-cursor"></span>';
+                                    this.throttledScroll();
+                                } catch (e) {}
+                            }
+                        }
+                    }
+
+                    bubbleDiv.innerHTML = this.parseMarkdown(accumulatedResponse); 
+                    this.memoryBank.push({ role: "assistant", content: accumulatedResponse });
+                    this.saveMemory();
+
+                } catch (error) {
+                    bubbleDiv.parentElement.className = `message-row error`;
+                    let errText = error.name === 'AbortError' ? "Waktu Habis (Timeout)." : error.message;
+                    bubbleDiv.innerHTML = `[Kesalahan Sistem] ${errText}`;
+                    this.memoryBank.pop(); 
+                } finally {
+                    this.isGenerating = false;
+                    this.toggleInputs(true);
+                }
+            }
+            
+            toggleInputs(isEnabled) {
+                this.ui.inputBox.disabled = !isEnabled;
+                this.ui.sendBtn.disabled = !isEnabled;
+            }
+
+            renderUserMessage(text) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = `message-row user`;
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.className = 'message-bubble';
+                bubbleDiv.textContent = text;
+                rowDiv.appendChild(bubbleDiv);
+                this.ui.chatBox.appendChild(rowDiv);
+                this.throttledScroll();
+            }
+
+            renderAgentMessage(markdownText) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = `message-row agent`;
+                
+                const avatarImg = this.createAvatar();
+                rowDiv.appendChild(avatarImg);
+
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.className = 'message-bubble';
+                bubbleDiv.innerHTML = this.parseMarkdown(markdownText);
+                
+                rowDiv.appendChild(bubbleDiv);
+                this.ui.chatBox.appendChild(rowDiv);
+                this.throttledScroll();
+            }
+
+            createAgentBubbleLoader() {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = `message-row agent`;
+                
+                const avatarImg = this.createAvatar();
+                rowDiv.appendChild(avatarImg);
+
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.className = 'message-bubble';
+                bubbleDiv.innerHTML = '<span class="blinking-cursor"></span>';
+                
+                rowDiv.appendChild(bubbleDiv);
+                this.ui.chatBox.appendChild(rowDiv);
+                this.throttledScroll();
+                
+                return { rowDiv, bubbleDiv };
+            }
+
+            createAvatar() {
+                const avatarImg = document.createElement('img');
+                avatarImg.src = CONFIG.AVATAR_SRC;
+                avatarImg.alt = 'Siggy';
+                avatarImg.className = 'agent-avatar';
+                return avatarImg;
+            }
+
+            throttledScroll() {
+                if (!this.scrollPending) {
+                    this.scrollPending = true;
+                    requestAnimationFrame(() => {
+                        this.ui.chatBox.scrollTop = this.ui.chatBox.scrollHeight;
+                        this.scrollPending = false;
+                    });
+                }
+            }
+        }
+
+        window.onload = () => { window.SiggySystem = new SiggyEnterpriseAgent(); };
+    </script>
+</body>
+</html>
+
+
