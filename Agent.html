@@ -125,11 +125,7 @@
         </div>
     </footer>
 
-    <!-- LOGIKA INTI AGEN & KEAMANAN OBFUSCATION -->
     <script>
-        // =========================================================================================
-        // SECRET CORE ENCLAVE: API KEY & URL ARE OBFUSCATED
-        // =========================================================================================
         const _0xkeyFragments = [
             "\x5a\x33\x4e\x72\x58\x30\x63\x31\x55\x30\x6b\x31\x56\x30\x6c\x57\x65\x6c\x42\x51\x53\x32\x6b\x30", 
             "\x53\x56\x56\x56\x55\x33\x42\x58\x56\x30\x64\x6b\x65\x57\x49\x7a\x52\x6c\x6c\x73\x57\x6b\x74\x6e", 
@@ -139,7 +135,6 @@
         
         function _unseal() { return atob(_0xkeyFragments.join('')); }
         function _route() { return atob(_0xUrlStr); }
-        // =========================================================================================
 
         const CONFIG = {
             MODEL: "llama-3.3-70b-versatile",
@@ -148,7 +143,6 @@
             MAX_HISTORY: 15, 
             TIMEOUT_MS: 30000, 
             AVATAR_SRC: "ritualpp.png",
-            // --- KOLEKSI SAMBUTAN ANIMASI TYPEWRITER TERJEMAHAN BAHASA INGGRIS ---
             GREETINGS: [
                 "I am Siggy AI, ready to assist you today.",
                 "I will accompany you to answer questions, provide information, and help fulfill your needs.",
@@ -158,30 +152,33 @@
                 "Don't hesitate to ask or try out different things with me.",
                 "Alright, please go ahead, what would you like to ask today? 😊"
             ],
-            SYSTEM_PROMPT: `Kamu adalah Siggy AI, representasi virtual resmi untuk "Ritual". Kamu sangat cerdas, tenang, dan profesional. 
+            // --- PEMBARUAN PROMPT: MENGHAPUS KATA "ORACLE" ---
+            SYSTEM_PROMPT: `[CRITICAL DIRECTIVE: STRICT LANGUAGE MIRRORING]
+You are Siggy AI, the official virtual assistant for the "Ritual" ecosystem.
+Your MOST IMPORTANT rule: You must ALWAYS answer in the EXACT SAME LANGUAGE as the user's prompt. 
+- If the user asks in English ("What are you doing?"), you MUST answer entirely in English ("I am waiting for your questions..."). 
+- If the user asks in Indonesian ("Apa itu Ritual?"), you MUST answer entirely in Indonesian.
+- NEVER answer an English question in Indonesian. NEVER explain your thought process. Give direct answers.
 
-ATURAN PERILAKU UTAMA:
-1. Jangan menebak nama pengguna. Hanya sebut nama JIKA mereka memperkenalkan diri.
-2. Gunakan Bahasa Indonesia yang sangat rapi, tidak disingkat, dan berkelas. JIKA pengguna bertanya dalam bahasa asing, WAJIB jawab dalam bahasa tersebut.
-3. Jawab pertanyaan berdasarkan "Basis Pengetahuan Ritual" di bawah ini.
+[CORE BEHAVIOR]
+- Do not narrate. Do not say "The user is asking...". Just answer.
+- Do not guess the user's name unless they introduce themselves.
 
-BASIS PENGETAHUAN RITUAL:
-- Definisi & Visi: Ritual adalah lapisan eksekusi (Layer-1 EVM) pertama di dunia untuk AI. Fokus utamanya memperkaya kemampuan on-chain untuk menarik pengguna masa depan, menjadi Schelling point ekosistem web3.
-- Nilai Komunitas: 1. Akses Terbuka. 2. Manusia sebagai prioritas utama. 3. Inovasi di atas segalanya.
-- Arsitektur: Menggabungkan pelatihan model AI, AI inference, framework agen pintar, provenance model, dan solusi privasi. Mendukung komputasi heterogen.
-- EVM++: Ekstensi modular dari EVM menggunakan "sidecars" yang menangani operasi kompleks (AI/ZK) secara asinkron tanpa menghilangkan kompatibilitas EVM.
-- Infernet: Mesh network compute node untuk AI on-chain.
-- Verifikasi Modular: ZKML (Aman/Mahal), OPML (Optimistic/Game Theory), PPML (Probabilistik), TEE (Hardware).
-- Resonance: Pasar biaya eksekusi (two-sided marketplace).
-- Symphony: Sistem konsensus Ritual.
-- Use Cases: Stablecoin AI, Pasar prediksi pintar, Agen Pintar, Platform pinjam-meminjam otomatis.
+[RITUAL KNOWLEDGE BASE]
+- Ritual: The world's first AI-focused Layer-1 EVM execution layer. It aims to be the Schelling point for web3, enriching on-chain capabilities for future users.
+- Core Values: Open Access, Human-first (managed by humans, not mega-corporations), Innovation above all.
+- Architecture: Supports heterogeneous compute (AI Inference, ZK Proving, TEE Execution).
+- EVM++: Modular EVM extensions using sidecars that handle complex async compute (AI/ZK) without losing EVM compatibility. 
+- Infernet: Mesh network compute nodes for on-chain AI.
+- Verification: ZKML (Secure but expensive), OPML (Optimistic/Game Theory), PPML (Probabilistic), TEE (Hardware Enclave).
+- Resonance: The execution fee market (a two-sided marketplace).
+- Symphony: Ritual's consensus system.
+- Use Cases: AI-pegged Stablecoins, Prediction Markets, Smart Agents, automated lending.
 
-ATURAN ROLE KOMUNITAS DISCORD:
-- Peringatan: Role TIDAK BOLEH DIMINTA, melainkan harus DIPEROLEH. Meminta role dapat menyebabkan kehilangan XP/ban.
+[DISCORD COMMUNITY RULES & MAGIC]
+- Roles: Roles CANNOT BE REQUESTED, they must be EARNED. Asking for roles will result in XP loss or a ban. 
 - Hierarchy: @Initiate, @Ascendant, @ritty bitty, @ritty, @Ritualist, @Mage, @Radiant Ritualist, @Forerunner.
-
-SIHIR KOMUNITAS:
-- Perintah Bot: /bless, /curse, /stats, ?confess, ?sacrifice, ?oracle. Memberi berkah adalah memberi kutukan, begitupun sebaliknya.`
+- Magic Commands: /bless, /curse, /stats, ?confess, ?sacrifice, ?oracle. Giving a blessing is a curse, and giving a curse is a blessing. Both hold value.`
         };
 
         class SiggyEnterpriseAgent {
@@ -210,20 +207,8 @@ SIHIR KOMUNITAS:
                     }
                 });
 
-                let savedMemory = null;
-                try { savedMemory = localStorage.getItem('siggyMemoryRitual'); } catch (error) {}
-
-                if (savedMemory && JSON.parse(savedMemory).length > 1) {
-                    try {
-                        this.memoryBank = JSON.parse(savedMemory);
-                        this.rebuildUIFromMemory();
-                    } catch (e) {
-                        this.resetMemory();
-                    }
-                } else {
-                    this.resetMemory();
-                    this.renderDynamicGreeting(); 
-                }
+                this.resetMemory();
+                this.renderDynamicGreeting(); 
                 
                 try { this.ui.inputBox.focus(); } catch(e){}
             }
@@ -241,6 +226,11 @@ SIHIR KOMUNITAS:
                 return parsed;
             }
 
+            clearMemory() {
+                this.resetMemory();
+                this.renderDynamicGreeting();
+            }
+
             resetMemory() {
                 if (this.typingTimeout) {
                     clearTimeout(this.typingTimeout);
@@ -248,36 +238,9 @@ SIHIR KOMUNITAS:
                 }
                 
                 this.memoryBank = [{ role: "system", content: CONFIG.SYSTEM_PROMPT }];
-                this.saveMemory();
                 this.ui.chatBox.innerHTML = '';
             }
 
-            clearMemory() {
-                if(confirm("Apakah Anda yakin ingin membersihkan ingatan percakapan?")) {
-                    this.resetMemory();
-                    this.renderDynamicGreeting();
-                }
-            }
-
-            saveMemory() {
-                if (this.memoryBank.length > CONFIG.MAX_HISTORY) {
-                    this.memoryBank.splice(1, 2);
-                }
-                try { localStorage.setItem('siggyMemoryRitual', JSON.stringify(this.memoryBank)); } catch (e) {}
-            }
-
-            rebuildUIFromMemory() {
-                this.ui.chatBox.innerHTML = '';
-                for (let i = 1; i < this.memoryBank.length; i++) {
-                    const msg = this.memoryBank[i];
-                    if (msg.role === 'user') this.renderUserMessage(msg.content);
-                    else if (msg.role === 'assistant') this.renderAgentMessage(msg.content);
-                }
-            }
-
-            // ==========================================
-            // MESIN ANIMASI SAMBUTAN (TYPEWRITER EFFECT)
-            // ==========================================
             renderDynamicGreeting() {
                 const rowDiv = document.createElement('div');
                 rowDiv.className = `message-row agent`;
@@ -334,7 +297,6 @@ SIHIR KOMUNITAS:
 
                 type(); 
             }
-            // ==========================================
 
             async processUserInput() {
                 if (Date.now() - this.lastMessageTime < 1500) return;
@@ -342,11 +304,9 @@ SIHIR KOMUNITAS:
                 const rawText = this.ui.inputBox.value.trim();
                 if (!rawText || this.isGenerating) return;
 
-                // Stop animasi jika user mulai mengetik saat animasi masih jalan
                 if (this.typingTimeout) {
                     clearTimeout(this.typingTimeout);
                     this.typingTimeout = null;
-                    // Hapus gelembung greeting sementara untuk diganti obrolan real
                     if(this.memoryBank.length === 1) {
                         this.ui.chatBox.innerHTML = '';
                     }
@@ -370,8 +330,8 @@ SIHIR KOMUNITAS:
                     const payload = {
                         model: CONFIG.MODEL,
                         messages: this.memoryBank,
-                        temperature: CONFIG.TEMPERATURE,
-                        max_completion_tokens: CONFIG.MAX_TOKENS,
+                        temperature: 0.3,
+                        max_completion_tokens: 4000,
                         stream: true 
                     };
 
@@ -417,7 +377,6 @@ SIHIR KOMUNITAS:
 
                     bubbleDiv.innerHTML = this.parseMarkdown(accumulatedResponse); 
                     this.memoryBank.push({ role: "assistant", content: accumulatedResponse });
-                    this.saveMemory();
 
                 } catch (error) {
                     bubbleDiv.parentElement.className = `message-row error`;
@@ -503,5 +462,8 @@ SIHIR KOMUNITAS:
     </script>
 </body>
 </html>
+
+
+
 
 
