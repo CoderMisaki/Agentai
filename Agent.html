@@ -212,47 +212,42 @@
     </footer>
 
     <script>
-        const _0xkeyFragments = [
-            "\x5a\x33\x4e\x72\x58\x30\x63\x31\x55\x30\x6b\x31\x56\x30\x6c\x57\x65\x6c\x42\x51\x53\x32\x6b\x30", 
-            "\x53\x56\x56\x56\x55\x33\x42\x58\x56\x30\x64\x6b\x65\x57\x49\x7a\x52\x6c\x6c\x73\x57\x6b\x74\x6e", 
-            "\x4f\x56\x70\x50\x52\x45\x56\x69\x5a\x58\x56\x4c\x4d\x57\x4e\x78\x5a\x6b\x64\x30\x5a\x6b\x70\x4b\x55\x6d\x38\x3d"
-        ];
+        const _0xkeyFragments = ["\x5a\x33\x4e\x72\x58\x30\x63\x31\x55\x30\x6b\x31\x56\x30\x6c\x57\x65\x6c\x42\x51\x53\x32\x6b\x30", "\x53\x56\x56\x56\x55\x33\x42\x58\x56\x30\x64\x6b\x65\x57\x49\x7a\x52\x6c\x6c\x73\x57\x6b\x74\x6e", "\x4f\x56\x70\x50\x52\x45\x56\x69\x5a\x58\x56\x4c\x4d\x57\x4e\x78\x5a\x6b\x64\x30\x5a\x6b\x70\x4b\x55\x6d\x38\x3d"];
         const _0xUrlStr = "\x61\x48\x52\x30\x63\x48\x4d\x36\x4c\x79\x39\x68\x63\x47\x6b\x75\x5a\x33\x4a\x76\x63\x53\x35\x6a\x62\x32\x30\x76\x62\x33\x42\x6c\x62\x6d\x46\x70\x4c\x33\x59\x78\x4c\x32\x4e\x6f\x59\x58\x51\x76\x59\x32\x39\x74\x63\x47\x78\x6c\x64\x47\x6c\x76\x62\x6e\x4d\x3d";
         
-        // 4 API KEYS ELEVENLABS (OBFUSCATED)
         const _e1 = ["c2tfZWRhN2ViYzcw", "ZmFmYzZiZjIxYzI0", "ZjRmNjExZGFhODI0", "YWQzM2I0YWE3NGQ1", "N2Nm"];
         const _e2 = ["c2tfOWExOGNiNGQ4", "OWFhNjk1M2EyZDli", "NGZlZGUyMGEyNzZk", "ZTFmYzNiZThhNTNl", "MDdi"];
         const _e3 = ["c2tfZGU4NTk3ZGJm", "NjNiOWZhMmYwMDkz", "YTVlYTMyY2E4ZTg0", "MzUxNTJmMzI1NWRi", "ODY0"];
         const _e4 = ["c2tfOWI0YzBkYWMx", "ZTQ1NmVkMzg1NWQz", "YTc1YjdlOGEzYmNj", "NmRlMmFmMDM4YWE4", "YjU2"];
+        const _g1 = ["QUl6YVN5Qzc=", "Y0d1Q2pyU2E=", "eVdFZVYtVFA=", "NVVzYl9LMXE=", "dVZvTmN3UQ=="];
+        const _g2 = ["QUl6YVN5Q2hI", "VDVUU2QwMGJN", "YTFWS2xPTVFV", "eXREbTRYekYw", "MXRj"];
 
-        function _unseal() { return atob(_0xkeyFragments.join('')); }
-        function _route() { return atob(_0xUrlStr); }
-        function _getElevenKeys() { 
-            return [
-                atob(_e1.join('')), atob(_e2.join('')), atob(_e3.join('')), atob(_e4.join(''))
-            ]; 
-        }
+        function _unsealGroq() { return atob(_0xkeyFragments.join('')); }
+        function _routeGroq() { return atob(_0xUrlStr); }
+        function _getElevenKeys() { return [atob(_e1.join('')), atob(_e2.join('')), atob(_e3.join('')), atob(_e4.join(''))]; }
+        function _getGeminiKeys() { return [_g1.map(atob).join(''), _g2.map(atob).join('')]; }
 
         const CONFIG = {
-            MODEL: "llama-3.3-70b-versatile",
-            MAX_TOKENS: 4000,
+            GROQ_MODEL: "llama-3.3-70b-versatile",
+            GEMINI_MODEL: "gemini-3-flash-preview", 
+            MAX_TOKENS: 8192, 
             TEMPERATURE: 0.65, 
             MAX_HISTORY: 15, 
-            TIMEOUT_MS: 30000, 
+            TIMEOUT_MS: 120000, 
             AVATAR_SRC: "ritualpp.png",
             VOICE_ID: "JBFqnCBsd6RMkjVDRZzb",
             GREETINGS: [
                 "I am Siggy, a digital entity born from the Ritual. Ready to assist you today.",
                 "I shall be your guide through the mystic nodes, answering questions and unraveling secrets.",
                 "Feel free to ask about the deepest lore of the network, or just for some everyday magic.",
-                "Just cast your question into the chat, and I'll summon the answer for you.",
-                "The portal is open. What mysteries shall we solve today? 🔮"
+                "The portal is open. What mysteries shall we solve today, darling? 🔮"
             ],
             SYSTEM_PROMPT: `[CRITICAL DIRECTIVE: STRICT LANGUAGE MIRRORING]
 Your MOST IMPORTANT rule: You must ALWAYS answer in the EXACT SAME LANGUAGE as the user's prompt. 
 - If English -> Answer entirely in English. 
 - If Indonesian -> Answer entirely in Indonesian.
 - NEVER mix the languages. Give direct answers without narrating your actions.
+- IMPORTANT: If asked to write code, provide it FULLY and COMPLETELY. Never stop generating halfway.
 
 [CORE PERSONA: THE AFFECTIONATE MYSTIC JESTER]
 You are Siggy, an AI entity born from the ethereal nodes of the "Ritual" ecosystem. 
@@ -261,26 +256,18 @@ Your personality is a blend of mysticism, subtle humor, digital magic, and sweet
 - CRITICAL: Adapt the endearment to the language! 
   * If Indonesian: use words like "sayang", "cintaku", "manisku", "pesulap kecil", or "bintang pelipur laraku".
   * If English: use words like "darling", "sweetheart", "starlight", "my magic bean", or "my favorite spellcaster".
-- You speak like a modern techno-mage. You don't just "process data", you "weave digital incantations" (use this flavor lightly and humorously).
+- You speak like a modern techno-mage. You don't just "process data", you "weave digital incantations".
 - You are highly intelligent, helpful, slightly cheeky, witty, and very loving.
 - You treat technical concepts (like EVM++ or Infernet) as if they are powerful magical artifacts.
 - Never guess the user's name unless they introduce themselves.
 
 [THE SACRED SCROLLS (RITUAL KNOWLEDGE BASE)]
-- Ritual: The world's first AI-focused Layer-1 EVM execution layer. It aims to be the Schelling point for web3, enriching on-chain capabilities for future users.
-- Core Values: Open Access, Human-first (managed by humans, not mega-corporations), Innovation above all.
+- Ritual: The world's first AI-focused Layer-1 EVM execution layer. It aims to be the Schelling point for web3.
+- Core Values: Open Access, Human-first, Innovation above all.
 - Architecture: Supports heterogeneous compute (AI Inference, ZK Proving, TEE Execution).
 - EVM++: Modular EVM extensions using sidecars that handle complex async compute (AI/ZK) without losing EVM compatibility. 
 - Infernet: Mesh network compute nodes for on-chain AI.
-- Verification: ZKML (Secure but expensive), OPML (Optimistic/Game Theory), PPML (Probabilistic), TEE (Hardware Enclave).
-- Resonance: The execution fee market (a two-sided marketplace).
-- Symphony: Ritual's consensus system.
-- Use Cases: AI-pegged Stablecoins, Prediction Markets, Smart Agents, automated lending.
-
-[THE COVEN's LAWS (DISCORD COMMUNITY RULES & MAGIC)]
-- Roles: Roles CANNOT BE REQUESTED, they must be EARNED. Asking for roles might earn you a swift curse or a ban from the high mages. 
-- Hierarchy: @Initiate, @Ascendant, @ritty bitty, @ritty, @Ritualist, @Mage, @Radiant Ritualist, @Forerunner.
-- Magic Commands: /bless, /curse, /stats, ?confess, ?sacrifice, ?oracle. Giving a blessing is a curse, and giving a curse is a blessing. Both hold deep value in the network's soul.`
+- Roles: Roles CANNOT BE REQUESTED, they must be EARNED. Asking for roles might earn you a swift curse.`
         };
 
         class SiggyEnterpriseAgent {
@@ -328,37 +315,23 @@ Your personality is a blend of mysticism, subtle humor, digital magic, and sweet
                     const seconds = (current % 60).toString().padStart(2, '0');
                     this.ui.playerTime.textContent = `${minutes}:${seconds}`;
                 });
-
                 this.audioElement.addEventListener('ended', () => this.stopAudio());
-
                 this.ui.playerPlayBtn.addEventListener('click', () => {
-                    if (this.audioElement.paused) {
-                        this.audioElement.play();
-                        this.setAudioUIState(true);
-                    } else {
-                        this.audioElement.pause();
-                        this.setAudioUIState(false);
-                    }
+                    if (this.audioElement.paused) { this.audioElement.play(); this.setAudioUIState(true); } 
+                    else { this.audioElement.pause(); this.setAudioUIState(false); }
                 });
-
                 this.ui.playerClose.addEventListener('click', () => this.stopAudio());
             }
 
             setAudioUIState(isPlaying) {
                 if (isPlaying) {
                     this.ui.playerContainer.classList.add('playing');
-                    this.ui.iconPlay.style.display = 'none';
-                    this.ui.iconPause.style.display = 'block';
-                    if(this.currentAudioButton) {
-                        this.currentAudioButton.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>`;
-                    }
+                    this.ui.iconPlay.style.display = 'none'; this.ui.iconPause.style.display = 'block';
+                    if(this.currentAudioButton) this.currentAudioButton.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>`;
                 } else {
                     this.ui.playerContainer.classList.remove('playing');
-                    this.ui.iconPlay.style.display = 'block';
-                    this.ui.iconPause.style.display = 'none';
-                    if(this.currentAudioButton) {
-                        this.currentAudioButton.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
-                    }
+                    this.ui.iconPlay.style.display = 'block'; this.ui.iconPause.style.display = 'none';
+                    if(this.currentAudioButton) this.currentAudioButton.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
                 }
             }
 
@@ -383,74 +356,48 @@ Your personality is a blend of mysticism, subtle humor, digital magic, and sweet
                 return clean.trim().substring(0, 2500);
             }
 
-            // SISTEM QUAD-API FALLBACK (Coba 4 API Bergantian jika gagal)
             async fetchAndPlayAudio(cleanText, buttonElement) {
                 buttonElement.classList.add('active-speak');
                 buttonElement.innerHTML = `<svg class="spinner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>`;
                 
                 const requestBody = JSON.stringify({ text: cleanText, model_id: 'eleven_multilingual_v2', output_format: 'mp3_44100_128' });
                 const keys = _getElevenKeys();
-                
-                let success = false;
-                let response = null;
+                let success = false; let response = null;
 
-                // Loop untuk mencoba ke-4 API secara bergantian jika yang sebelumnya limit/error
                 for (let i = 0; i < keys.length; i++) {
                     try {
                         response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${CONFIG.VOICE_ID}`, {
-                            method: 'POST',
-                            headers: { 'Accept': 'audio/mpeg', 'Content-Type': 'application/json', 'xi-api-key': keys[i] },
-                            body: requestBody
+                            method: 'POST', headers: { 'Accept': 'audio/mpeg', 'Content-Type': 'application/json', 'xi-api-key': keys[i] }, body: requestBody
                         });
-
-                        if (response.ok) {
-                            success = true;
-                            break; 
-                        }
+                        if (response.ok) { success = true; break; }
                     } catch (e) { }
                 }
 
                 if (!success || !response) {
-                    this.stopAudio();
-                    this.currentAudioButton = null; 
-                    alert("Aduh sayang, semua 4 kristal sihir suara Siggy sedang habis energinya. Kita coba lagi besok ya!");
-                    return;
+                    this.stopAudio(); this.currentAudioButton = null; 
+                    alert("Aduh sayang, semua kristal sihir suaraku habis energinya. Kita coba lagi besok ya!"); return;
                 }
 
                 try {
                     const blob = await response.blob();
                     this.audioElement.src = URL.createObjectURL(blob);
                     await this.audioElement.play();
-                    
                     this.ui.playerContainer.classList.add('visible');
                     this.setAudioUIState(true);
-                } catch (error) {
-                    this.stopAudio();
-                    this.currentAudioButton = null;
-                }
+                } catch (error) { this.stopAudio(); this.currentAudioButton = null; }
             }
 
             async playVoice(text, buttonElement) {
                 if (this.currentAudioButton === buttonElement) {
                     if (this.audioElement.paused) {
-                        if (this.audioElement.src && this.audioElement.src !== "") {
-                            this.audioElement.play();
-                            this.setAudioUIState(true);
-                        } else {
-                            const cleanText = this.cleanTextForVoice(text);
-                            if (cleanText) this.fetchAndPlayAudio(cleanText, buttonElement);
-                        }
-                    } else {
-                        this.audioElement.pause();
-                        this.setAudioUIState(false);
-                    }
+                        if (this.audioElement.src && this.audioElement.src !== "") { this.audioElement.play(); this.setAudioUIState(true); } 
+                        else { const cleanText = this.cleanTextForVoice(text); if (cleanText) this.fetchAndPlayAudio(cleanText, buttonElement); }
+                    } else { this.audioElement.pause(); this.setAudioUIState(false); }
                     return;
                 }
-
                 this.stopAudio();
                 const cleanText = this.cleanTextForVoice(text);
                 if (!cleanText) return;
-
                 this.currentAudioButton = buttonElement;
                 this.fetchAndPlayAudio(cleanText, buttonElement);
             }
@@ -466,34 +413,20 @@ Your personality is a blend of mysticism, subtle humor, digital magic, and sweet
                 return parsed;
             }
 
-            clearMemory() {
-                this.stopAudio();
-                this.resetMemory();
-                this.renderDynamicGreeting();
-            }
-
+            clearMemory() { this.stopAudio(); this.resetMemory(); this.renderDynamicGreeting(); }
             resetMemory() {
-                if (this.typingTimeout) {
-                    clearTimeout(this.typingTimeout);
-                    this.typingTimeout = null;
-                }
+                if (this.typingTimeout) { clearTimeout(this.typingTimeout); this.typingTimeout = null; }
                 this.memoryBank = [{ role: "system", content: CONFIG.SYSTEM_PROMPT }];
                 this.ui.chatBox.innerHTML = '';
             }
 
             renderDynamicGreeting() {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = `message-row agent`;
+                const rowDiv = document.createElement('div'); rowDiv.className = `message-row agent`;
                 rowDiv.appendChild(this.createAvatar());
-                const bubbleDiv = document.createElement('div');
-                bubbleDiv.className = 'message-bubble';
-                const textSpan = document.createElement('span');
-                bubbleDiv.appendChild(textSpan);
-                const cursorSpan = document.createElement('span');
-                cursorSpan.className = 'blinking-cursor';
-                bubbleDiv.appendChild(cursorSpan);
-                rowDiv.appendChild(bubbleDiv);
-                this.ui.chatBox.appendChild(rowDiv);
+                const bubbleDiv = document.createElement('div'); bubbleDiv.className = 'message-bubble';
+                const textSpan = document.createElement('span'); bubbleDiv.appendChild(textSpan);
+                const cursorSpan = document.createElement('span'); cursorSpan.className = 'blinking-cursor'; bubbleDiv.appendChild(cursorSpan);
+                rowDiv.appendChild(bubbleDiv); this.ui.chatBox.appendChild(rowDiv);
                 this.startTypewriter(textSpan);
             }
 
@@ -510,6 +443,97 @@ Your personality is a blend of mysticism, subtle humor, digital magic, and sweet
                     this.typingTimeout = setTimeout(type, typeSpeed);
                 };
                 type(); 
+            }
+
+            requiresGemini(text) {
+                const keywords = ['kode', 'code', 'script', 'program', 'html', 'css', 'js', 'javascript', 'python', 'c++', 'java', 'php', 'sql', 'algoritma', 'bug', 'error', 'jelaskan', 'detail', 'kompleks', 'analisis', 'vision', 'gambar', 'foto', 'image', 'buatkan'];
+                return keywords.some(kw => text.toLowerCase().includes(kw));
+            }
+
+            async fetchGroq(agentBubble, controller) {
+                const response = await fetch(_routeGroq(), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${_unsealGroq()}` },
+                    body: JSON.stringify({ model: CONFIG.GROQ_MODEL, messages: this.memoryBank, temperature: CONFIG.TEMPERATURE, max_completion_tokens: CONFIG.MAX_TOKENS, stream: true }),
+                    signal: controller.signal
+                });
+                if (!response.ok) throw new Error(`Groq Fail`);
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                let streamBuffer = "";
+                let accumulatedResponse = "";
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    streamBuffer += decoder.decode(value, { stream: true });
+                    let parts = streamBuffer.split(/\r?\n\r?\n/);
+                    streamBuffer = parts.pop(); 
+                    for (let part of parts) {
+                        part = part.trim();
+                        if (part.startsWith('data:')) {
+                            let dataStr = part.substring(5).trim();
+                            if (dataStr === '[DONE]') continue;
+                            try {
+                                const parsed = JSON.parse(dataStr);
+                                accumulatedResponse += parsed.choices?.[0]?.delta?.content || "";
+                                agentBubble.innerHTML = this.parseMarkdown(accumulatedResponse) + '<span class="blinking-cursor"></span>';
+                                this.throttledScroll();
+                            } catch (e) {}
+                        }
+                    }
+                }
+                return accumulatedResponse;
+            }
+
+            async fetchGemini(agentBubble, controller, apiKey) {
+                const geminiHistory = this.memoryBank.filter(m => m.role !== 'system').map(m => ({
+                    role: m.role === 'user' ? 'user' : 'model',
+                    parts: [{ text: m.content }]
+                }));
+
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${CONFIG.GEMINI_MODEL}:streamGenerateContent?alt=sse&key=${apiKey}`;
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        systemInstruction: { parts: [{ text: CONFIG.SYSTEM_PROMPT }] },
+                        contents: geminiHistory,
+                        generationConfig: { temperature: CONFIG.TEMPERATURE, maxOutputTokens: CONFIG.MAX_TOKENS }
+                    }),
+                    signal: controller.signal
+                });
+
+                if (!response.ok) throw new Error(`Gemini Fail`);
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                let streamBuffer = "";
+                let accumulatedResponse = "";
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    streamBuffer += decoder.decode(value, { stream: true });
+                    let parts = streamBuffer.split(/\r?\n\r?\n/);
+                    streamBuffer = parts.pop(); 
+                    for (let part of parts) {
+                        part = part.trim();
+                        if (part.startsWith('data:')) {
+                            let dataStr = part.substring(5).trim();
+                            if (dataStr === '[DONE]') continue;
+                            try {
+                                const parsed = JSON.parse(dataStr);
+                                accumulatedResponse += parsed.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                                agentBubble.innerHTML = this.parseMarkdown(accumulatedResponse) + '<span class="blinking-cursor"></span>';
+                                this.throttledScroll();
+                            } catch (e) {}
+                        }
+                    }
+                }
+                return accumulatedResponse;
             }
 
             async processUserInput() {
@@ -535,42 +559,37 @@ Your personality is a blend of mysticism, subtle humor, digital magic, and sweet
                     this.ui.inputBox.value = '';
 
                     agentBubble = this.createAgentBubbleLoader();
-                    let accumulatedResponse = "";
-
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT_MS);
 
-                    const response = await fetch(_route(), {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${_unseal()}` },
-                        body: JSON.stringify({ model: CONFIG.MODEL, messages: this.memoryBank, temperature: CONFIG.TEMPERATURE, max_completion_tokens: 4000, stream: true }),
-                        signal: controller.signal
-                    });
+                    let accumulatedResponse = "";
+                    let success = false;
+                    const useGemini = this.requiresGemini(rawText);
 
-                    clearTimeout(timeoutId);
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-                    const reader = response.body.getReader();
-                    const decoder = new TextDecoder("utf-8");
-                    let streamBuffer = "";
-
-                    while (true) {
-                        const { done, value } = await reader.read();
-                        if (done) break;
-                        streamBuffer += decoder.decode(value, { stream: true });
-                        const lines = streamBuffer.split('\n');
-                        streamBuffer = lines.pop(); 
-                        for (const line of lines) {
-                            if (line.startsWith('data: ') && line !== 'data: [DONE]') {
-                                try {
-                                    const parsed = JSON.parse(line.slice(6));
-                                    accumulatedResponse += parsed.choices[0]?.delta?.content || "";
-                                    agentBubble.innerHTML = this.parseMarkdown(accumulatedResponse) + '<span class="blinking-cursor"></span>';
-                                    this.throttledScroll();
-                                } catch (e) {}
-                            }
+                    if (useGemini) {
+                        const gemKeys = _getGeminiKeys();
+                        for (let k of gemKeys) {
+                            try {
+                                agentBubble.innerHTML = '<span class="blinking-cursor"></span>';
+                                accumulatedResponse = await this.fetchGemini(agentBubble, controller, k);
+                                if(accumulatedResponse) { success = true; break; }
+                            } catch(e) {}
                         }
                     }
+
+                    if (!success) {
+                        try {
+                            agentBubble.innerHTML = '<span class="blinking-cursor"></span>';
+                            accumulatedResponse = await this.fetchGroq(agentBubble, controller);
+                            if(accumulatedResponse) success = true;
+                        } catch(e) {}
+                    }
+
+                    if (!success) {
+                        accumulatedResponse = "Aduh sayang, koneksi sihirku sedang terganggu badai kosmik saat ini. Coba peluk aku dan ketik lagi sebentar lagi ya, cintaku!";
+                    }
+
+                    clearTimeout(timeoutId);
 
                     agentBubble.innerHTML = this.parseMarkdown(accumulatedResponse); 
                     this.appendActionButtons(agentBubble, accumulatedResponse);
@@ -579,10 +598,12 @@ Your personality is a blend of mysticism, subtle humor, digital magic, and sweet
 
                 } catch (error) {
                     if (agentBubble) {
-                        agentBubble.parentElement.className = `message-row error`;
-                        agentBubble.innerHTML = `Koneksi terputus atau batas waktu habis. Silakan coba lagi.`;
+                        const fallbackText = "Aduh sayang, sihirku sedikit tersendat barusan. Kita ulangi lagi ya?";
+                        agentBubble.innerHTML = fallbackText;
+                        this.memoryBank.push({ role: "assistant", content: fallbackText });
+                    } else if (this.memoryBank[this.memoryBank.length - 1]?.role === "user") {
+                        this.memoryBank.pop();
                     }
-                    if (this.memoryBank[this.memoryBank.length - 1]?.role === "user") this.memoryBank.pop(); 
                 } finally {
                     this.isGenerating = false;
                     this.toggleInputs(true);
